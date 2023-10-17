@@ -89,50 +89,11 @@ func TestHitGraphQL(t *testing.T) {
 			"accountCredit":  norek1,
 		}
 
-		// norek2 transfer ke norek1
-		/*
-			variables2 := map[string]any{
-				"channelId":      channelId,
-				"amountTrx":      2.0,
-				"remark":         remark,
-				"tellerId":       tellerId,
-				"currencyCredit": currency,
-				"currencyDebit":  currency,
-				"accountDebit":   norek2,
-				"accountCredit":  norek1,
-			}
-		*/
-
-		//wg := &sync.WaitGroup{}
-
 		if err := client.Mutate(context.Background(), &result1, variables1); err != nil {
 			log.Println(err.Error())
 		}
 
-		/*
-			go func() {
-				wg.Add(1)
-				defer wg.Done()
-
-				if err := client.Mutate(context.Background(), &result1, variables1); err != nil {
-					log.Println(err.Error())
-				}
-			}()
-		*/
-		/*
-			go func() {
-				wg.Add(1)
-				defer wg.Done()
-
-				if err := client.Mutate(context.Background(), &result2, variables2); err != nil {
-					log.Println(err.Error())
-				}
-			}()
-		*/
-
-		//wg.Wait()
 		log.Println(result1.AbcsOvbInternal)
-		//log.Println(result2.AbcsOvbInternal)
 	})
 }
 
