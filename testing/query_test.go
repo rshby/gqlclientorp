@@ -24,8 +24,9 @@ type ResultOvbLocal struct {
 
 type ResultSimpleOverbooking struct {
 	AbcsOvbInternal struct {
-		StatusCode int `graphql:"statusCode" json:"status_code"`
-	} `graphql:"simpleOvb(request: { channelId: $channelId amountTrx: $amountTrx remark: $remark tellerId: $tellerId currencyCredit: $currencyCredit currencyDebit: $currencyDebit accountDebit: $accountDebit accountCredit: $accountCredit})"`
+		StatusCode int    `graphql:"statusCode" json:"status_code"`
+		TrRefn     string `graphql:"trrefn" json:"trrefn"`
+	} `graphql:"testOvbSync(request: { channelId: $channelId amountTrx: $amountTrx remark: $remark tellerId: $tellerId currencyCredit: $currencyCredit currencyDebit: $currencyDebit accountDebit: $accountDebit accountCredit: $accountCredit})"`
 }
 
 func TestHitGraphQL(t *testing.T) {
@@ -188,7 +189,154 @@ func TestSimpleOverbooking(t *testing.T) {
 
 	wg := &sync.WaitGroup{}
 
-	wg.Add(2)
+	wg.Add(8)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek1,
+			"accountCredit":  norek2,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 1 :", string(resultJson))
+		}
+	}(wg)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek2,
+			"accountCredit":  norek1,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 2 :", string(resultJson))
+		}
+	}(wg)
+
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek1,
+			"accountCredit":  norek2,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 1 :", string(resultJson))
+		}
+	}(wg)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek2,
+			"accountCredit":  norek1,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 2 :", string(resultJson))
+		}
+	}(wg)
+
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek1,
+			"accountCredit":  norek2,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 1 :", string(resultJson))
+		}
+	}(wg)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek2,
+			"accountCredit":  norek1,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 2 :", string(resultJson))
+		}
+	}(wg)
+
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
 
