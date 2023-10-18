@@ -22,6 +22,12 @@ type ResultOvbLocal struct {
 	} `graphql:"abcsOvbInternal(request: { channelId: $channelId amountTrx: $amountTrx remark: $remark tellerId: $tellerId currencyCredit: $currencyCredit currencyDebit: $currencyDebit accountDebit: $accountDebit accountCredit: $accountCredit})"`
 }
 
+type ResultSimpleOverbooking struct {
+	AbcsOvbInternal struct {
+		StatusCode int `graphql:"statusCode" json:"status_code"`
+	} `graphql:"simpleOvb(request: { channelId: $channelId amountTrx: $amountTrx remark: $remark tellerId: $tellerId currencyCredit: $currencyCredit currencyDebit: $currencyDebit accountDebit: $accountDebit accountCredit: $accountCredit})"`
+}
+
 func TestHitGraphQL(t *testing.T) {
 	t.Run("hit graphql", func(t *testing.T) {
 		client := graphql.NewClient("https://localhost:8003/graphql", nil)
@@ -170,4 +176,68 @@ func TestHitOvb(t *testing.T) {
 	wg.Wait()
 
 	log.Println("overbooking done!!")
+}
+
+func TestSimpleOverbooking(t *testing.T) {
+	norek1 := "045202000009807"
+	norek2 := "045202000001809"
+	tellerId := "0999999"
+	currency := "USD"
+	channelId := "mb"
+	remark := "test"
+
+	wg := &sync.WaitGroup{}
+
+	wg.Add(2)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek1,
+			"accountCredit":  norek2,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 1 :", string(resultJson))
+		}
+	}(wg)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		result := ResultSimpleOverbooking{}
+		client := graphql.NewClient("https://localhost:8003/graphql", nil)
+		variables := map[string]any{
+			"channelId":      channelId,
+			"amountTrx":      2.0,
+			"remark":         remark,
+			"tellerId":       tellerId,
+			"currencyCredit": currency,
+			"currencyDebit":  currency,
+			"accountDebit":   norek2,
+			"accountCredit":  norek1,
+		}
+
+		if err := client.Mutate(context.Background(), &result, variables); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if resultJson, err := json.Marshal(&result.AbcsOvbInternal); err == nil {
+			log.Println("result 2 :", string(resultJson))
+		}
+	}(wg)
+
+	wg.Wait()
+	log.Println("overbooking done!")
 }
